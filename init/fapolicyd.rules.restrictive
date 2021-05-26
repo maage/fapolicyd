@@ -45,8 +45,13 @@ deny_audit perm=execute all : ftype=application/x-executable
 allow perm=execute all : path=%ld_so_path% trust=1
 
 # Need to carve out an exception for ansible, which uses python
-allow perm=any uid=0 : dir=/tmp/ansible
-allow perm=any uid=0 : dir=/root/.ansible/tmp/
+# - per target/remote user rules needed (here admin user)
+#   current rules based on default ansible.cfg config:
+#   remote_tmp = ~/.ansible/tmp
+# - allow transport and python to create / open command files
+# - require all programs to be trusted
+%ansible_exe=/usr/bin/sftp,/usr/bin/scp,%python3_path%
+allow perm=open uid=admin exe=%ansible_exe trust=1 : dir=/home/admin/.ansible/tmp/
 
 # Only allow system python executables and libs
 # File type by: fapolicyd-cli --ftype /path-to-file
