@@ -16,8 +16,7 @@
 #
 %languages=application/x-bytecode.ocaml,application/x-bytecode.python,application/java-archive,text/x-java,application/x-java-applet,application/javascript,text/javascript,text/x-awk,text/x-gawk,text/x-lisp,application/x-elc,text/x-lua,text/x-m4,text/x-perl,text/x-php,text/x-python,text/x-R,text/x-ruby,text/x-script.guile,text/x-tcl,text/x-luatex,text/x-systemtap
 
-# Carve out an exception for dracut
-allow perm=any uid=0 : dir=/var/tmp/
+# Let root to use trusted programs without any limits
 allow perm=any uid=0 trust=1 : all
 
 # Prevent execution by ld.so
@@ -42,7 +41,7 @@ deny_audit perm=execute all : ftype=application/x-executable
 
 # This is a workaround for kernel thinking this is being executed because it
 # occurs during the execve call for an ELF binary. We catch actual execution
-# in rule 3.
+# in rule 2.
 allow perm=execute all : path=%ld_so_path% trust=1
 
 # Need to carve out an exception for ansible, which uses python
