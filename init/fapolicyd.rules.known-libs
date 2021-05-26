@@ -26,7 +26,7 @@ allow perm=open all : ftype=application/x-sharedlib trust=1
 deny_audit perm=open all : ftype=application/x-sharedlib
 
 # Allow trusted programs to execute
-allow perm=execute all : trust=1
+allow perm=execute trust=1 : trust=1
 
 # Need to carve out an exception for ansible, which uses python
 # - per target/remote user rules needed (here: admin)
