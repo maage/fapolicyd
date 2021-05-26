@@ -13,6 +13,7 @@ deny_audit perm=any pattern=ld_so : all
 
 # We have to carve out an exception for the system updaters
 # or things go very bad (deadlock).
+# Not require trusted as during upgrade programs and rpmdb changes are not done atomically
 allow perm=open exe=/usr/bin/rpm : all
 allow perm=open exe=%python3_path% comm=dnf : all
 
