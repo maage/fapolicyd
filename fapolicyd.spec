@@ -38,20 +38,19 @@ sed -i "s/%ld_so_path%/`find /usr/lib64/ -type f -name 'ld-2\.*.so' | sed 's/\//
     --with-audit \
     --disable-shared
 
-make CFLAGS="%{optflags}" %{?_smp_mflags}
+%make_build
 
 %install
-make DESTDIR="%{buildroot}" INSTALL='install -p' install
-mkdir -p %{buildroot}/%{python3_sitelib}/dnf-plugins/
-install -p -m 644 dnf/%{name}-dnf-plugin.py %{buildroot}/%{python3_sitelib}/dnf-plugins/
+%make_install
+install -p -m 644 -D dnf/%{name}-dnf-plugin.py %{buildroot}/%{python3_sitelib}/dnf-plugins/%{name}-dnf-plugin.py
 install -p -m 644 -D init/%{name}-tmpfiles.conf %{buildroot}/%{_tmpfilesdir}/%{name}.conf
-install -p -m 644 init/%{name}.rules.known-libs %{buildroot}/%{_sysconfdir}/%{name}/%{name}.rules
+install -p -m 644 -D init/%{name}.rules.known-libs %{buildroot}/%{_sysconfdir}/%{name}/%{name}.rules
 install -p -D -m 0644 %{SOURCE1} %{buildroot}%{_sysusersdir}/%{name}.conf
 mkdir -p %{buildroot}/%{_localstatedir}/lib/%{name}
 mkdir -p %{buildroot}/run/%{name}
 
 #cleanup
-find %{buildroot} \( -name '*.la' -o -name '*.a' \) -exec rm -f {} ';'
+find %{buildroot} \( -name '*.la' -o -name '*.a' \) -delete
 
 %check
 make check
