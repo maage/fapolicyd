@@ -5,12 +5,14 @@ Release: 1
 License: GPLv3+
 URL: http://people.redhat.com/sgrubb/fapolicyd
 Source0: https://people.redhat.com/sgrubb/fapolicyd/%{name}-%{version}.tar.gz
+Source: %{name}.sysusers
 BuildRequires: autoconf automake libtool gcc
 BuildRequires: kernel-headers
 BuildRequires: systemd-devel libgcrypt-devel rpm-devel file-devel file
 BuildRequires: libcap-ng-devel libseccomp-devel lmdb-devel
 BuildRequires: python3-devel
 BuildRequires: uthash-devel
+BuildRequires:  systemd-rpm-macros
 Requires(pre): shadow-utils
 Requires(post): systemd-units
 Requires(preun): systemd-units
@@ -44,6 +46,7 @@ mkdir -p %{buildroot}/%{python3_sitelib}/dnf-plugins/
 install -p -m 644 dnf/%{name}-dnf-plugin.py %{buildroot}/%{python3_sitelib}/dnf-plugins/
 install -p -m 644 -D init/%{name}-tmpfiles.conf %{buildroot}/%{_tmpfilesdir}/%{name}.conf
 install -p -m 644 init/%{name}.rules.known-libs %{buildroot}/%{_sysconfdir}/%{name}/%{name}.rules
+install -p -D -m 0644 %{SOURCE1} %{buildroot}%{_sysusersdir}/%{name}.conf
 mkdir -p %{buildroot}/%{_localstatedir}/lib/%{name}
 mkdir -p %{buildroot}/run/%{name}
 
@@ -54,7 +57,7 @@ find %{buildroot} \( -name '*.la' -o -name '*.a' \) -exec rm -f {} ';'
 make check
 
 %pre
-getent passwd %{name} >/dev/null || useradd -r -M -d %{_localstatedir}/lib/%{name} -s /sbin/nologin -c "Application Whitelisting Daemon" %{name}
+%sysusers_create_compat %{SOURCE1}
 
 %post
 %systemd_post %{name}.service
@@ -72,6 +75,7 @@ getent passwd %{name} >/dev/null || useradd -r -M -d %{_localstatedir}/lib/%{nam
 %attr(755,root,%{name}) %dir %{_datadir}/%{name}
 %attr(644,root,%{name}) %{_datadir}/%{name}/%{name}.rules.*
 %attr(750,root,%{name}) %dir %{_sysconfdir}/%{name}
+%{_sysusersdir}/%{name}.conf
 %config(noreplace) %attr(644,root,%{name}) %{_sysconfdir}/%{name}/%{name}.conf
 %config(noreplace) %attr(644,root,%{name}) %{_sysconfdir}/%{name}/%{name}.trust
 %config(noreplace) %attr(644,root,%{name}) %{_sysconfdir}/%{name}/%{name}.rules

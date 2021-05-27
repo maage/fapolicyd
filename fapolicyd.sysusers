@@ -1,0 +1,2 @@
+#Type	Name		ID	GECOS                        		Home directory			Shell
+u	fapolicyd	-	"Application Whitelisting Daemon"	%{_localstatedir}/lib/%{name}	/sbin/nologin
